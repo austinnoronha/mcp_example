@@ -1,0 +1,155 @@
+[tool.poetry]
+name = "mcp_example"
+version = "0.1.0"
+description = "A demo application showcasing MCP Example with Celery Redis, prompt generation, and Docker."
+authors = ["Austin Noronha"]
+readme = "README.md"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.12"
+python-dotenv = "^1.0.1"
+requests = "^2.31.0"
+python-multipart = "^0.0.20"
+celery = "5.3.1"
+redis = "^6.2.0"
+fastapi = "^0.110.0"
+uvicorn = "^0.29.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.0.0"
+pytest-cov = "^4.1.0"
+black = "^24.1.1"
+isort = "^5.13.2"
+ruff = "^0.2.1"
+pre-commit = "^3.6.0"
+ssort = "^0.14.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+
+[tool.black]
+#line-length = 88
+#target-version = ["py38", "py39"]
+line-length = 88
+target-version = ["py39"]
+include = '\.pyi?$'
+extend-exclude = '''
+# A regex preceded with ^/ will apply only to files and directories
+# in the root of the project.
+^/docs
+^/downloads
+^/uploads
+^/static
+'''
+skip-string-normalization = true
+preview = true
+
+[tool.black.format]
+line-length = 88
+target-version = ['py39']
+include = '\.pyi?$'
+extend-exclude = '''
+# A regex preceded with ^/ will apply only to files and directories
+# in the root of the project.
+^/docs
+^/downloads
+^/uploads
+^/static
+'''
+skip-string-normalization = true
+preview = true
+
+[tool.ruff]
+indent-width = 4
+# Exclude a variety of commonly ignored directories.
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".git-rewrite",
+    ".hg",
+    ".ipynb_checkpoints",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pyenv",
+    ".pytest_cache",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    "venv",
+    ".vscode",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "site-packages",
+    "venv",
+    "downloads",
+    "uploads",
+    "static"
+]
+
+
+[tool.ruff.lint]
+extend-select = [
+    # "D",     # pydocstyle
+    "E501",  # enforce line length
+    # "UP",    # pyupgrade
+]
+
+ignore = [
+    "E722", # Do not use bare `except`
+    "E402", 
+    "F841", 
+    "E711", 
+    "E721", 
+    "E712",
+    "E501",
+    "F811",
+    "F601"
+]
+
+[tool.isort]
+profile = "black"
+
+[tool.ssort]
+# Enable grouping imports
+group_imports = true
+
+[tool.coverage.run]
+source = ["src"]
+omit = ["tests/*", "**/__init__.py"]
+branch = true
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if __name__ == .__main__.:",
+    "raise NotImplementedError",
+    "if TYPE_CHECKING:",
+    "pass",
+    "raise ImportError",
+]
+fail_under = 0
+show_missing = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "-v --tb=short --cov=src --cov-report=term-missing"
+filterwarnings = [
+    "ignore::DeprecationWarning",
+    "ignore::UserWarning"
+] 

@@ -1,0 +1,38 @@
+# Python virtual environment
+.venv/
+venv/
+ENV/
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+downloads/
+uploads/
+
+# IDE specific files
+.idea/
+.vscode/
+*.swp
+*.swo
+*.bak
+*.DStore
+*.bat
+*.dat
+
+# Environment variables
+.env
+
+# Logs
+*.log
+
+# Local development settings
+*.local
+
+# App Files not required
+celerybeat-*
