@@ -64,7 +64,7 @@ async def generate_prompt(req: PromptRequest):
         "objective": "Create a FastAPI app with Celery to show messages shared by different users",
         "tech_stack": "Python 3.12, Celery, Redis, Git, Pytest",
         "git_tool": "github",
-        "user_info": "Austin Noronha"
+        "user_info": "Austin"
     }
     """
     logger.info(f"Received prompt generation request: {req}")

@@ -2,7 +2,7 @@
 name = "mcp_example"
 version = "0.1.0"
 description = "A demo application showcasing MCP Example with Celery Redis, prompt generation, and Docker."
-authors = ["Austin Noronha"]
+authors = ["Austin"]
 readme = "README.md"
 package-mode = false
 
