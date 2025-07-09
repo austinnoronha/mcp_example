@@ -129,7 +129,7 @@ docker-compose up --build
 
 ## API Signatures
 
-### 1. `POST /generate-prompt/`
+### 1. `POST /v1/infer`
 - **Request:**
   ```json
   {
@@ -144,11 +144,7 @@ docker-compose up --build
   { "task_id": "<celery-task-id>", "status": "processing" }
   ```
 
-### 2. `POST /v1/infer`
-- **Request:** (same as `/generate-prompt/`)
-- **Response:** (same as `/generate-prompt/`)
-
-### 3. `GET /task-status/{task_id}`
+### 2. `GET /task-status/{task_id}`
 - **Response (pending):**
   ```json
   { "status": "pending" }
@@ -162,7 +158,7 @@ docker-compose up --build
   { "status": "failure", "error": "<error-message>" }
   ```
 
-### 4. `GET /v1/metadata`
+### 3. `GET /v1/metadata`
 - **Response:**
   ```json
   {
@@ -174,7 +170,7 @@ docker-compose up --build
   }
   ```
 
-### 5. `GET /v1/health`
+### 4. `GET /v1/health`
 - **Response (healthy):**
   ```json
   { "status": "ok" }
