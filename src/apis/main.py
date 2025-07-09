@@ -94,7 +94,7 @@ async def generate_prompt(req: PromptRequest):
 async def mcp_infer(req: PromptRequest):
     return await generate_prompt(req)
 
-@app.get("/task-status/{task_id}", summary="Get status/result of a prompt generation task", response_description="Task status and result if available")
+@app.get("/v1/task-status/{task_id}", summary="Get status/result of a prompt generation task", response_description="Task status and result if available")
 async def get_task_status(task_id: str):
     logger.info(f"Checking status for task ID: {task_id}")
     try:
