@@ -17,6 +17,9 @@ from pydantic import BaseModel
 from src.libs.prompt import generate_prompt_task, celery_app
 from src.utils.helpers import get_logger
 from src.utils.config import REDIS_URL
+from fastapi.responses import JSONResponse
+from typing import Optional
+import redis
 
 logger = get_logger(__name__)
 
@@ -39,7 +42,17 @@ class PromptRequest(BaseModel):
     git_tool: str
     user_info: str
 
-@app.post("/generate-prompt/", summary="Generate a custom project prompt", response_description="Task ID and status")
+class MetadataResponse(BaseModel):
+    name: str
+    description: str
+    version: str
+    capabilities: list[str]
+    maintainer: Optional[str] = None
+
+class HealthResponse(BaseModel):
+    status: str
+    detail: Optional[str] = None
+
 async def generate_prompt(req: PromptRequest):
     """
     Initiates a Celery task to generate a custom project prompt.
@@ -76,6 +89,11 @@ async def generate_prompt(req: PromptRequest):
         logger.error(f"Failed to start prompt generation task: {e}")
         raise HTTPException(status_code=500, detail="Failed to start prompt generation task.")
 
+# MCP-compliant inference endpoint (alias)
+@app.post("/v1/infer", summary="MCP inference endpoint", response_description="Task ID and status")
+async def mcp_infer(req: PromptRequest):
+    return await generate_prompt(req)
+
 @app.get("/task-status/{task_id}", summary="Get status/result of a prompt generation task", response_description="Task status and result if available")
 async def get_task_status(task_id: str):
     logger.info(f"Checking status for task ID: {task_id}")
@@ -95,4 +113,43 @@ async def get_task_status(task_id: str):
             return {"status": result.state.lower()}
     except Exception as e:
         logger.error(f"Error checking status for task {task_id}: {e}")
-        raise HTTPException(status_code=500, detail="Failed to check task status.") 
+        raise HTTPException(status_code=500, detail="Failed to check task status.")
+
+@app.get("/v1/metadata", response_model=MetadataResponse, summary="MCP metadata endpoint")
+async def get_metadata():
+    return MetadataResponse(
+        name="MCP Prompt Generator API",
+        description="API for generating custom project prompts using Celery and FastAPI.",
+        version="1.0.0",
+        capabilities=["prompt-generation", "async-tasks"],
+        maintainer="Austin Noronha"
+    )
+
+@app.get("/v1/health", response_model=HealthResponse, summary="MCP health check endpoint")
+async def get_health():
+    redis_ok = False
+    celery_ok = False
+    details = []
+    # Check Redis
+    try:
+        r = redis.Redis.from_url(REDIS_URL)
+        if r.ping():
+            redis_ok = True
+        else:
+            details.append("Redis ping failed")
+    except Exception as e:
+        details.append(f"Redis error: {e}")
+    # Check Celery
+    try:
+        ping_result = celery_app.control.ping(timeout=1.0)
+        if ping_result and isinstance(ping_result, list) and len(ping_result) > 0:
+            celery_ok = True
+        else:
+            details.append("No Celery workers responded to ping")
+    except Exception as e:
+        details.append(f"Celery error: {e}")
+    # Compose status
+    if redis_ok and celery_ok:
+        return HealthResponse(status="ok")
+    else:
+        return HealthResponse(status="degraded", detail=", ".join(details)) 
