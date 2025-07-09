@@ -1,2 +1,7 @@
-REDIS_URL = "redis://localhost:6379/0"
-OPEN_ROUTER_API_KEY='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'
+import os
+from dotenv import load_dotenv
+
+load_dotenv() 
+
+REDIS_URL = os.getenv("REDIS_URL",  "redis://localhost:6379/0")
+OPEN_ROUTER_API_KEY=os.getenv("OPEN_ROUTER_API_KEY", None)
